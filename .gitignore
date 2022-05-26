@@ -1,3 +1,7 @@
 node_modules
 package-lock.json
-public
+public/kino
+public/multik
+public/multserial
+public/season
+public/serial
