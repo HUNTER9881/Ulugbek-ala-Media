@@ -17,18 +17,18 @@ const multikModel = Schema({
         type: Schema.ObjectId,
         ref: "tag"
     }],
-    quality_ID: {
+    quality_ID: [{
         type: Schema.ObjectId,
         ref: "quality"
-    },
+    }],
     genre_ID: [{
         type: Schema.ObjectId,
         ref: "genre"
     }],
-    year_ID: {
+    year_ID: [{
         type: Schema.ObjectId,
         ref: "year"
-    },
+    }],
     actor_ID: [{
         type: Schema.ObjectId,
         ref: "actor"
@@ -41,10 +41,12 @@ const multikModel = Schema({
         type: String,
         required: true
     },
-    trailer: {
+     // 1-element: trailer
+    // 1-element: image
+    trailer_image: [{
         type: String,
         required: true
-    },
+    }],
     imbd: {
         type: String,
         required: true

@@ -1,17 +1,15 @@
 const callback = require("./callback");
+const ObjectId = require('mongodb').ObjectId
+
 const {
     v4: uuidv4
 } = require('uuid');
 module.exports = class HelloClass {
-    constructor(Model, Request, Response, Next, user, serial, kino, mult_serial) {
+    constructor(Model, Request, Response, Next) {
         this.Model = Model;
         this.req = Request;
         this.res = Response;
         this.next = Next;
-        this.user = user
-        this.serial = serial
-        this.kino = kino
-        this.mult_serial = mult_serial
     }
     // @description: Malumot yaratish
     async CREATE_DATA() {
@@ -104,17 +102,11 @@ module.exports = class HelloClass {
         const {
             id
         } = req.params;
-
-
-
         const DATA = await MODEL.findByIdAndUpdate(id)
         const result = Object.values(DATA)[5]
         const keys = Object.keys(result)
-
         const values_body = Object.values(defaultBody)
         const key_body = Object.values(defaultBody)
-
-
         let datas = []
         for (const a of keys) {
             for (const b of key_body) {
@@ -129,61 +121,88 @@ module.exports = class HelloClass {
                 }
             }
         }
-
         res.json(datas)
-
-
-
-
-
-        // await DATA.save({
-        //     ...DATA,
-        //     ...RESULT
-        // })
-        // res.json(DATA)
-        // .then(() => {
-        //     res.json(callback.SUCCESS(result));
-        // })
-        // .catch((error) => {
-        //     res.json(callback.ERROR(error));
-        // });
-
-
-
-
-
-
-
-
     }
-    // @description: Yagona id boyicha malumotlarni olish
+    // @description: Yagona id boyicha malumotlarni filtrlash
     async FILTER_BY_ID() {
         const MODEL = this.Model;
         const req = this.req;
         const res = this.res;
         const next = this.next;
-
-
-        const user = this.user
-        const serial = this.serial
-        const kino = this.kino
-        const mult_serial = this.mult_serial
-
-        
-        const key = [user, serial, kino, mult_serial] 
-
-        console.log(key)
-
-
-
-
-
-
-        const id = req.params.id
-        await MODEL
-            .find({
-                [key]: id
-            })
+        await MODEL.aggregate([{
+                $facet: {
+                    "user": [{
+                        $match: {
+                            user_ID: ObjectId(req.params.id)
+                        }
+                    }],
+                    "multik": [{
+                        $match: {
+                            multik_ID: ObjectId(req.params.id)
+                        }
+                    }],
+                    "kino": [{
+                        $match: {
+                            kino_ID: ObjectId(req.params.id)
+                        }
+                    }],
+                    "serial": [{
+                        $match: {
+                            serial_ID: ObjectId(req.params.id)
+                        }
+                    }],
+                    "category": [{
+                        $match: {
+                            category_ID: ObjectId(req.params.id)
+                        }
+                    }],
+                    "director": [{
+                        $match: {
+                            director_ID: ObjectId(req.params.id)
+                        }
+                    }],
+                    "tag": [{
+                        $match: {
+                            tag_ID: ObjectId(req.params.id)
+                        }
+                    }],
+                    "quality": [{
+                        $match: {
+                            quality_ID: ObjectId(req.params.id)
+                        }
+                    }],
+                    "genre": [{
+                        $match: {
+                            genre_ID: ObjectId(req.params.id)
+                        }
+                    }],
+                    "year": [{
+                        $match: {
+                            year_ID: ObjectId(req.params.id)
+                        }
+                    }],
+                    "actor": [{
+                        $match: {
+                            actor_ID: ObjectId(req.params.id)
+                        }
+                    }],
+                    "country": [{
+                        $match: {
+                            country_ID: ObjectId(req.params.id)
+                        }
+                    }],
+                    "mult_serial": [{
+                        $match: {
+                            multik_ID: ObjectId(req.params.id)
+                        }
+                    }],
+                    "reply": [{
+                        $match: {
+                            comment_ID: ObjectId(req.params.id)
+                        }
+                    }],
+                }
+            }])
             .exec((error, data) => {
                 if (error) {
                     res.json(callback.ERROR(error));
@@ -191,6 +210,54 @@ module.exports = class HelloClass {
                     res.json(callback.SUCCESS(data));
                 }
             });
+    }
+
+    async CREATE_WITH_IMAGE(pathName) {
+        const MODEL = this.Model;
+        const req = this.req;
+        const res = this.res;
+        const next = this.next;
+
+        // elementlarni massivga joylash
+        function arrayComplile (array, body) {
+            for(let item of body) {
+                const values = item
+                array.push(values)
+                return array
+            }
+        }
+
+        // rasmlarni massivga joylash
+        const arrayImage = []
+        const FILES = req.files
+        for (let item of FILES) {
+            const { filename } = item
+            arrayImage.push(filename)
+        }
+
+        const result = new MODEL({
+            [pathName]: arrayImage,
+            category_ID: arrayComplile([], req.body.category_ID),
+            director_ID: arrayComplile([], req.body.director_ID),
+            tag_ID: arrayComplile([], req.body.tag_ID),
+            quality_ID: arrayComplile([], req.body.quality_ID),
+            genre_ID: arrayComplile([], req.body.genre_ID),
+            year_ID: arrayComplile([], req.body.year_ID),
+            actor_ID: arrayComplile([], req.body.actor_ID),
+            country_ID: arrayComplile([], req.body.country_ID),
+            ...req.body,
+        })
+        await result
+            .save()
+            .then(() => {
+                res.json(callback.SUCCESS(result));
+            })
+            .catch((error) => {
+                res.json(callback.ERROR(error));
+            });
+
+
+
 
     }
 

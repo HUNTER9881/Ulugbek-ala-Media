@@ -10,10 +10,10 @@ router.post('/create', async (req, res, next) => {
 })
 
 
-// router.get('/:id', async (req, res, next) => {
-//     const result = new HelloClass(Model, req, res, next)
-//     result.GET_ONE()
-// })
+router.get('/:id', async (req, res, next) => {
+    const result = new HelloClass(Model, req, res, next)
+    result.FILTER_BY_ID()
+})
 
 
 

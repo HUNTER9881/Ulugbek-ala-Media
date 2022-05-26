@@ -17,18 +17,18 @@ const kinoModel = Schema({
         type: Schema.ObjectId,
         ref: "tag"
     }],
-    quality_ID: {
+    quality_ID: [{
         type: Schema.ObjectId,
         ref: "quality"
-    },
+    }],
     genre_ID: [{
         type: Schema.ObjectId,
         ref: "genre"
     }],
-    year_ID: {
+    year_ID: [{
         type: Schema.ObjectId,
         ref: "year"
-    },
+    }],
     actor_ID: [{
         type: Schema.ObjectId,
         ref: "actor"
@@ -50,24 +50,17 @@ const kinoModel = Schema({
         type: Number,
         default: 0
     },
-   
-    trailer: {
-        type: String,
-        required: true
-    },
-    kino: {
-        type: String,
-        required: true
-    },
     like: {
         type: Number,
-        required: true
+        default: 0
     },
     dislike: {
         type: Number,
-        required: true
+        default: 0
     },
-    images: [{
+    // 1-element: kino
+    // 2-element va undan uyogi: images
+    kino_images: [{
         type: String,
         required: true
     }],

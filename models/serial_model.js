@@ -10,7 +10,7 @@ const searialSchema = Schema({
             ref: "season"
         },
         rating: {
-            type: Number, 
+            type: Number,
             default: 0
         },
         name: {
@@ -18,10 +18,6 @@ const searialSchema = Schema({
             required: true
         },
         description: {
-            type: String,
-            required: true
-        },
-        video: {
             type: String,
             required: true
         },
@@ -37,7 +33,10 @@ const searialSchema = Schema({
             type: String,
             required: true
         },
-        images: [{
+
+        // 1-element: video
+        // 2 dan uyoqiga faqat rasm yuklash
+        image_video: [{
             type: String,
             required: true
         }]

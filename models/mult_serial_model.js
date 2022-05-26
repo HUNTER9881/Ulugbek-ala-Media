@@ -9,7 +9,7 @@ const multikSerial = Schema({
             ref: "multik_model"
         },
         rating: {
-            type: Number, 
+            type: Number,
             default: 0
         },
         name: {
@@ -20,10 +20,10 @@ const multikSerial = Schema({
             type: String,
             required: true
         },
-        video: {
+        video: [{
             type: String,
             required: true
-        },
+        }],
         like: {
             type: Number,
             required: true
@@ -36,6 +36,7 @@ const multikSerial = Schema({
             type: String,
             required: true
         },
+        // hamma element rasm
         images: [{
             type: String,
             required: true

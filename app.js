@@ -37,6 +37,7 @@ app.use('/api/tag', require('./router/tagRouter'))
 app.use('/api/tarif', require('./router/tarifRouter'))
 app.use('/api/user', require('./router/userRouter'))
 app.use('/api/year', require('./router/yearRouter'))
+app.use('/api/kino', require('./router/kinoRouter'))
 
 
 
