@@ -58,8 +58,8 @@ const kinoModel = Schema({
         type: Number,
         default: 0
     },
-    // 1-element: kino
-    // 2-element va undan uyogi: images
+        // 1-element: kino
+        // 2-element va undan uyogi: images
     kino_images: [{
         type: String,
         required: true

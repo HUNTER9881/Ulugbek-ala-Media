@@ -38,9 +38,11 @@ app.use('/api/tarif', require('./router/tarifRouter'))
 app.use('/api/user', require('./router/userRouter'))
 app.use('/api/year', require('./router/yearRouter'))
 app.use('/api/kino', require('./router/kinoRouter'))
-
-
-
+app.use('/api/season', require('./router/seasonRouter'))
+app.use('/api/serial', require('./router/serialRouter'))
+app.use('/api/multik', require('./router/multfilmRouter'))
+app.use('/api/multserial', require('./router/multserialRouter'))
+app.use('/api/rating', require('./router/ratingRouter'))
 
 
 app.listen(port, () => {

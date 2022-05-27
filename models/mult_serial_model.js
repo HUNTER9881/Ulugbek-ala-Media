@@ -20,6 +20,8 @@ const multikSerial = Schema({
             type: String,
             required: true
         },
+        // 1-element: kino
+        // 2-element va undan uyogi: images
         video: [{
             type: String,
             required: true
@@ -36,11 +38,7 @@ const multikSerial = Schema({
             type: String,
             required: true
         },
-        // hamma element rasm
-        images: [{
-            type: String,
-            required: true
-        }]
+
 
 
     }, {

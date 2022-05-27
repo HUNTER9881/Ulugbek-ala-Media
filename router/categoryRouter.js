@@ -18,16 +18,19 @@ router.get('/:id', async (req, res, next) => {
 })
 
 router.put('/:id', async (req, res, next) => {
-    const result = await Model.findByIdAndUpdate(req.params.id)
-    result.name = req.body.name
-    await result
-        .save()
-        .then(() => {
-            res.json(callback.SUCCESS(result));
-        })
-        .catch((error) => {
-            res.json(callback.ERROR(error));
-        });
+    // const result = await Model.findByIdAndUpdate(req.params.id)
+    // result.name = req.body.name
+    // await result
+    //     .save()
+    //     .then(() => {
+    //         res.json(callback.SUCCESS(result));
+    //     })
+    //     .catch((error) => {
+    //         res.json(callback.ERROR(error));
+    //     });
+
+    const result = new HelloClass(Model, req, res, next)
+    result.UPDATE_DATA()
 })
 router.delete('/:id', async (req, res, next) => {
     const result = new HelloClass(Model, req, res, next)

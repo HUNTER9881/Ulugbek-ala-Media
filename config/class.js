@@ -1,15 +1,17 @@
 const callback = require("./callback");
 const ObjectId = require('mongodb').ObjectId
-
+const path = require('path')
+const fs = require('fs')
 const {
     v4: uuidv4
 } = require('uuid');
 module.exports = class HelloClass {
-    constructor(Model, Request, Response, Next) {
+    constructor(Model, Request, Response, Next, Check) {
         this.Model = Model;
         this.req = Request;
         this.res = Response;
         this.next = Next;
+        this.check = Check;
     }
     // @description: Malumot yaratish
     async CREATE_DATA() {
@@ -99,15 +101,15 @@ module.exports = class HelloClass {
         const res = this.res;
         const next = this.next;
         const defaultBody = req.body;
-        const {
-            id
-        } = req.params;
+        const { id  } = req.params; 
         const DATA = await MODEL.findByIdAndUpdate(id)
         const result = Object.values(DATA)[5]
         const keys = Object.keys(result)
         const values_body = Object.values(defaultBody)
         const key_body = Object.values(defaultBody)
         let datas = []
+
+        
         for (const a of keys) {
             for (const b of key_body) {
                 if (a == b) {
@@ -115,7 +117,6 @@ module.exports = class HelloClass {
                         result[a[index]] = field;
                         return result;
                     }, {})
-                    data.save()
                     datas.push(data)
 
                 }
@@ -211,30 +212,29 @@ module.exports = class HelloClass {
                 }
             });
     }
-
+    // @description: Fayl boyicha yuklash
     async CREATE_WITH_IMAGE(pathName) {
         const MODEL = this.Model;
         const req = this.req;
         const res = this.res;
         const next = this.next;
-
         // elementlarni massivga joylash
-        function arrayComplile (array, body) {
-            for(let item of body) {
+        function arrayComplile(array, body) {
+            for (let item of body) {
                 const values = item
                 array.push(values)
                 return array
             }
         }
-
         // rasmlarni massivga joylash
         const arrayImage = []
         const FILES = req.files
         for (let item of FILES) {
-            const { filename } = item
+            const {
+                filename
+            } = item
             arrayImage.push(filename)
         }
-
         const result = new MODEL({
             [pathName]: arrayImage,
             category_ID: arrayComplile([], req.body.category_ID),
@@ -255,10 +255,138 @@ module.exports = class HelloClass {
             .catch((error) => {
                 res.json(callback.ERROR(error));
             });
+    }
+    // @description: Yagona id boyicha malumotlarni tahrorlash
+    async UPDTATE_WITH_IMAGE(folder, pathName) {
+        const MODEL = this.Model;
+        const req = this.req;
+        const res = this.res;
+        const next = this.next;
+        const check = this.check;
+        await MODEL.findById(req.params.id).exec((error, data) => { // {}
+            if (error) {
+                throw error
+            } else {
+                const FOUND_FILES = data[pathName]
+                for (let item of FOUND_FILES) {
+                    const file_path_name = path.join(__dirname, `../public/${folder}/${item}`)
+                    fs.unlink(file_path_name, function (error) {
+                        if (error) {
+                            console.log("Old file isn't deleted")
+                        }
+                        console.log("Old file is deleted")
+                    })
+                }
+            }
+        })
+        const allFiles = req.files
+        const arrayFiles = []
+        for (let item of allFiles) {
+            const {
+                filename
+            } = item
+            arrayFiles.push(filename)
+        }
+        const result = await MODEL.findByIdAndUpdate(req.params.id)
+        result[pathName] = arrayFiles
+        await result.save()
+            .then(() => res.json(result))
+            .catch((error) => res.json(error))
+    }
+    // @description: Yagona id boyicha rasmli malumotlarni o'chirish
+    async DELETE_WITH_IMAGE() {
+        const MODEL = this.Model;
+        const req = this.req;
+        const res = this.res;
+        const next = this.next;
+        await MODEL.findById(req.params.id).exec((error, data) => { // {}
+            if (error) {
+                throw error
+            } else {
+                const FOUND_FILES = data[pathName]
+                for (let item of FOUND_FILES) {
+                    const file_path_name = path.join(__dirname, `../public/${folder}/${item}`)
+                    fs.unlink(file_path_name, function (error) {
+                        if (error) {
+                            console.log("Old file isn't deleted")
+                        }
+                        console.log("Old file is deleted")
+                    })
+                }
+            }
+        })
+        await MODEL.findByIdAndDelete(req.params.id)
+        res.json(callback.SUCCESS("🤣😂🤣🤣"))
 
+    }
+    // @description: Rating baho qoyish
+    async RATING(ratingElement, ChangeModel) {
+        const MODEL = this.Model;
+        const req = this.req;
+        const res = this.res;
+        const next = this.next;
 
+        const rating = req.body.rating
+        const element_ID = req.body[ratingElement]
 
+        if (!rating || !element_ID) {
+            res.json({
+                message: "Fill form",
+            });
+        }
+        const result = new MODEL({
+            rating: rating,
+            [ratingElement]: element_ID
+        });
+        result.save()
+            .then(async () => {
+                const resSuccess = await MODEL.aggregate([
+                    // $match - yangilikni id si boyicha malumotni olib berdi
+                    {
+                        $match: {
+                            [ratingElement]: ObjectId(element_ID)
+                        }
+                    },
+                    // $group - guruhlash uchun
+                    {
+                        $group: {
+                            _id: "$" + ratingElement,
+                            count: {
+                                $sum: 1
+                            },
+                            totalSum: {
+                                $sum: "$rating"
+                            },
+                        },
+                    },
+                    // o'rtacha arifmetikasini hisoblash
+                    {
+                        $project: {
+                            _id: 1,
+                            count: 1,
+                            totalSum: {
+                                $round: [{
+                                    $divide: ["$totalSum", "$count"]
+                                }, 1],
+                            },
+                        },
+                    },
+                ]);
+                const totalSum = resSuccess[0].totalSum
+                // fronteddan kiritilgan yangilikni id si boyicha ratingn olib totalSum ni yozdik 
+                const getNews = await ChangeModel.findByIdAndUpdate({
+                    _id: element_ID
+                }).select({
+                    rating: 1
+                })
+                getNews.rating = totalSum
+                getNews.save()
 
+                res.json(result)
+            })
+            .catch((error) => {
+                res.json(error)
+            })
     }
 
 };
