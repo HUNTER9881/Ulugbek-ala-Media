@@ -7,6 +7,6 @@ module.exports = {
         useFindAndModify: false,
         useUnifiedTopology: true,
     },
-    token_time: 1000 * 60 * 60 * 2,
-    token_key: "fe57ee544f7c4692d7bfe57ee544f7c4692d7be26eac8568b01211e2bc9e26eac8568b01211e2bc9",
+    token_time: 1000 * 60 * 60 * 24,
+    token_key: "secret_key",
 }

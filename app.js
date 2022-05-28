@@ -43,6 +43,7 @@ app.use('/api/serial', require('./router/serialRouter'))
 app.use('/api/multik', require('./router/multfilmRouter'))
 app.use('/api/multserial', require('./router/multserialRouter'))
 app.use('/api/rating', require('./router/ratingRouter'))
+app.use('/api/contact', require('./router/contactRouter'))
 
 
 app.listen(port, () => {

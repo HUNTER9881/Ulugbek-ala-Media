@@ -30,7 +30,7 @@ router.put('/:id', async (req, res, next) => {
     //     });
 
     const result = new HelloClass(Model, req, res, next)
-    result.UPDATE_DATA()
+    result.UPDATE_DATA("name", "surname")
 })
 router.delete('/:id', async (req, res, next) => {
     const result = new HelloClass(Model, req, res, next)

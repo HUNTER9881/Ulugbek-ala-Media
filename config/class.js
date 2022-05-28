@@ -95,34 +95,26 @@ module.exports = class HelloClass {
         });
     }
     // @description: Tahrirlash
-    async UPDATE_DATA(...element) {
+    async UPDATE_DATA() {
         const MODEL = this.Model;
         const req = this.req;
         const res = this.res;
         const next = this.next;
         const defaultBody = req.body;
-        const { id  } = req.params; 
-        const DATA = await MODEL.findByIdAndUpdate(id)
-        const result = Object.values(DATA)[5]
-        const keys = Object.keys(result)
-        const values_body = Object.values(defaultBody)
-        const key_body = Object.values(defaultBody)
-        let datas = []
-
-        
-        for (const a of keys) {
-            for (const b of key_body) {
-                if (a == b) {
-                    const data = values_body.reduce((result, field, index) => {
-                        result[a[index]] = field;
-                        return result;
-                    }, {})
-                    datas.push(data)
-
-                }
+        const { id } = req.params;
+        await MODEL.findByIdAndUpdate(id).exec(async (error, data) => {
+            if (error) throw error
+            else {
+                const result = Object.assign(data, defaultBody)
+                await data.save()
+                    .then(() => {
+                        res.json(result)
+                    })
+                    .catch((error) => {
+                        res.json(error)
+                    })
             }
-        }
-        res.json(datas)
+        })
     }
     // @description: Yagona id boyicha malumotlarni filtrlash
     async FILTER_BY_ID() {
