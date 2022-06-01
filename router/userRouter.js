@@ -1,21 +1,12 @@
 const express = require('express');
 const router = express.Router()
-const Model = require('../models/user_model');
-const HelloClass = require('../config/class')
 const callback = require("../config/callback");
 const bcrypt = require('bcryptjs')
 const jwt = require("jsonwebtoken")
-const {
-    token_key,
-    token_time
-} = require('../config/index')
-const {
-    checkToken,
-    userRole,
-    userStatus,
-    userBalance
-} = require('../middleware/auth')
-
+const { token_key, token_time} = require('../config/index')
+const { checkToken, userRole, userStatus, userBalance } = require('../middleware/auth')
+const Model = require('../models/user_model');
+const HelloClass = require('../config/class')
 
 
 router.post('/create', async (req, res, next) => {
@@ -56,9 +47,6 @@ router.post("/login", async (req, res, next) => {
                 }, token_key, {
                     expiresIn: token_time
                 });
-
-
-
                 res.header({
                     "Authorization": "Bearer " + token
                 })
@@ -69,7 +57,7 @@ router.post("/login", async (req, res, next) => {
         }
     }
 })
-router.get('/decode', async (req, res, next) => {
+router.get('/decode', checkToken, userRole("admin", "user"),  async (req, res, next) => {
     const token = req.headers.authorization
     var base64Url = token.split('.')[1];
     var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -83,11 +71,11 @@ router.get('/all', checkToken, userRole("admin", "user"), userStatus("vip"), use
     const result = new HelloClass(Model, req, res, next)
     result.GET_ALL()
 })
-router.get('/:id', async (req, res, next) => {
+router.get('/:id',  checkToken, userRole("admin", "user"), async (req, res, next) => {
     const result = new HelloClass(Model, req, res, next)
     result.GET_ONE()
 })
-router.put('/:id', async (req, res, next) => {
+router.put('/:id',  checkToken, userRole("admin", "user"), async (req, res, next) => {
     const result = await Model.findByIdAndUpdate(req.params.id)
     result.name = req.body.name;
     result.price = req.body.price;
@@ -101,11 +89,8 @@ router.put('/:id', async (req, res, next) => {
             res.json(callback.ERROR(error));
         });
 })
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id',  checkToken, userRole("admin", "user"), async (req, res, next) => {
     const result = new HelloClass(Model, req, res, next)
     result.DELETE_ONE()
 })
-
-
-
 module.exports = router

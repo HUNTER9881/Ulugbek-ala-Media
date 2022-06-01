@@ -3,8 +3,13 @@ const router = express.Router()
 const Model = require('../models/category_model');
 const HelloClass = require('../config/class')
 const callback = require("../config/callback");
-
-router.post('/create', async (req, res, next) => {
+const {
+    checkToken,
+    userRole,
+    userStatus,
+    userBalance
+} = require('../middleware/auth')
+router.post('/create', checkToken, userRole("admin"), async (req, res, next) => {
     const result = new HelloClass(Model, req, res, next)
     result.CREATE_DATA()
 })
@@ -17,22 +22,11 @@ router.get('/:id', async (req, res, next) => {
     result.GET_ONE()
 })
 
-router.put('/:id', async (req, res, next) => {
-    // const result = await Model.findByIdAndUpdate(req.params.id)
-    // result.name = req.body.name
-    // await result
-    //     .save()
-    //     .then(() => {
-    //         res.json(callback.SUCCESS(result));
-    //     })
-    //     .catch((error) => {
-    //         res.json(callback.ERROR(error));
-    //     });
-
+router.put('/:id', checkToken, userRole("admin"), async (req, res, next) => {
     const result = new HelloClass(Model, req, res, next)
     result.UPDATE_DATA("name", "surname")
 })
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id', checkToken, userRole("admin"), async (req, res, next) => {
     const result = new HelloClass(Model, req, res, next)
     result.DELETE_ONE()
 })

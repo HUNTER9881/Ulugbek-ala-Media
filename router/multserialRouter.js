@@ -5,7 +5,13 @@ const HelloClass = require('../config/class')
 const callback = require("../config/callback");
 const multer = require('multer');
 const md5 = require('md5')
-const path = require('path')
+const path = require('path');
+const {
+    checkToken,
+    userRole,
+    userStatus,
+    userBalance
+} = require('../middleware/auth')
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, './public/multserial')
@@ -32,7 +38,7 @@ router.get('/filter/:id', async (req, res, next) => {
     const result = new HelloClass(Model, req, res, next)
     result.FILTER_BY_ID()
 })
-router.get('/:id', async (req, res, next) => {
+router.get('/:id', checkToken, userRole("admin", "user"), userStatus("vip"), userBalance, async (req, res, next) => {
     const result = new HelloClass(Model, req, res, next)
     result.GET_ONE(
         ["multik_model"]

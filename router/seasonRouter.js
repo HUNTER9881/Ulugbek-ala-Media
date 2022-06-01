@@ -6,6 +6,12 @@ const callback = require("../config/callback");
 const multer = require('multer');
 const md5 = require('md5')
 const path = require('path')
+const {
+    checkToken,
+    userRole,
+    userStatus,
+    userBalance
+} = require('../middleware/auth')
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, './public/season')
@@ -18,7 +24,7 @@ const upload = multer({
     storage: storage
 })
 
-router.post('/create', upload.array("files", 12), async (req, res, next) => {
+router.post('/create',  checkToken, userRole("admin"),  upload.array("files", 12), async (req, res, next) => {
     const result = new HelloClass(Model, req, res, next)
     result.CREATE_WITH_IMAGE("trailer_image")
 })
@@ -52,11 +58,11 @@ router.get('/:id', async (req, res, next) => {
         ["country_ID"],
     )
 })
-router.put('/:id', upload.array("files", 12), async (req, res, next) => {
+router.put('/:id',  checkToken, userRole("admin"),  upload.array("files", 12), async (req, res, next) => {
     const result = new HelloClass(Model, req, res, next)
     result.UPDTATE_WITH_IMAGE("season", "trailer_image")
 })
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id',  checkToken, userRole("admin"),  async (req, res, next) => {
     const result = new HelloClass(Model, req, res, next)
     result.DELETE_WITH_IMAGE("season", "trailer_image")
 })

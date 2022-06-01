@@ -17,7 +17,12 @@ const storage = multer.diskStorage({
 const upload = multer({
     storage: storage
 })
-
+const {
+    checkToken,
+    userRole,
+    userStatus,
+    userBalance
+} = require('../middleware/auth')
 router.post('/create', upload.array("files", 12), async (req, res, next) => {
     const result = new HelloClass(Model, req, res, next)
     result.CREATE_WITH_IMAGE("trailer_image")
@@ -32,7 +37,7 @@ router.get('/filter/:id', async (req, res, next) => {
     const result = new HelloClass(Model, req, res, next)
     result.FILTER_BY_ID()
 })
-router.get('/:id', async (req, res, next) => {
+router.get('/:id',  async (req, res, next) => {
     const result = new HelloClass(Model, req, res, next)
     result.GET_ONE(
         ["season_ID"]
