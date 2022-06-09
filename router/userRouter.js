@@ -42,6 +42,9 @@ router.post("/login", async (req, res, next) => {
                         NAME: user.name,
                         STATUS: user.status,
                         ROLE: user.role,
+                        EMAIL: user.email,
+                        BALANCE: user.balance,
+                        UUID: user.uuid,
                         ID: user._id
                     }
                 }, token_key, {
@@ -57,7 +60,7 @@ router.post("/login", async (req, res, next) => {
         }
     }
 })
-router.get('/decode', checkToken, userRole("admin", "user"),  async (req, res, next) => {
+router.get('/decode', /* checkToken, userRole("admin", "user"), */  async (req, res, next) => {
     const token = req.headers.authorization
     var base64Url = token.split('.')[1];
     var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');

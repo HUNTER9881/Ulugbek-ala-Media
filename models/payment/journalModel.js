@@ -5,8 +5,6 @@ const JournalSchema = mongoose.Schema({
     amount: { type: Number, required: true },
 }, { timestapms: true })
 
-
-
 // Jurnalga yozilgan paytda userni balansini ustiga qoshib yoqvoradi
 JournalSchema.pre("save", async function (req, res, next) {
     const user = await this.model("user").findByIdAndUpdate(this.userID)
@@ -14,4 +12,6 @@ JournalSchema.pre("save", async function (req, res, next) {
     user.save({ validateBeforeSave: false })
     next()
 })
+
+
 module.exports = mongoose.model("journal", JournalSchema)

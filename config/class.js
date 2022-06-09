@@ -12,6 +12,14 @@ module.exports = class HelloClass {
         this.res = Response;
         this.next = Next;
         this.check = Check;
+
+        this.a = 1000
+        this.b = 2000
+        this.name = "Hello name"
+    }
+    randomElement(elem, req, res) {
+        const result = this.name
+        res.json(result)
     }
     // @description: Malumot yaratish
     async CREATE_DATA() {
@@ -101,7 +109,9 @@ module.exports = class HelloClass {
         const res = this.res;
         const next = this.next;
         const defaultBody = req.body;
-        const { id } = req.params;
+        const {
+            id
+        } = req.params;
         await MODEL.findByIdAndUpdate(id).exec(async (error, data) => {
             if (error) throw error
             else {
@@ -380,5 +390,4 @@ module.exports = class HelloClass {
                 res.json(error)
             })
     }
-
 };

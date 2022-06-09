@@ -10,5 +10,5 @@ module.exports = {
     token_time: 1000 * 60 * 60 * 24,
     token_key: "secret_key",
     merchant_id: 1474, // oson
-    token: "wJUVVIpNmv6v9XyOouwMsnxRXloDjfAFOkqySFc408pZVNE9", // oson
+    token: "QZqIMDOm1ax66g5OIdg19ztSnMRZ2jDI8TgKmUWdUk9Qp3uX", // oson
 }
